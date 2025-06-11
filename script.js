@@ -16,17 +16,35 @@ const navMenu = document.getElementById('nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
 
 // Mobile menu toggle
-hamburger.addEventListener('click', () => {
+hamburger.addEventListener('click', (e) => {
+    e.preventDefault();
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
+    
+    // Prevent body scroll when menu is open
+    if (navMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
 });
 
 // Close mobile menu when clicking on a link
 navLinks.forEach(link => {
-    link.addEventListener('click', () => {
+    link.addEventListener('click', (e) => {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
+        document.body.style.overflow = '';
     });
+});
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 });
 
 // Navbar scroll effect
@@ -461,5 +479,152 @@ interactiveElements.forEach(element => {
         document.body.style.cursor = 'default';
     });
 });
+
+// Mobile-specific improvements and touch handling
+// Mobile-specific touch handling for project cards
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+if (isTouchDevice) {
+    projectCards.forEach(card => {
+        const overlay = card.querySelector('.project-overlay');
+        let touchStartTime;
+        
+        card.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+        });
+        
+        card.addEventListener('touchend', (e) => {
+            const touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTime;
+            
+            // If it's a quick tap (not a scroll), toggle overlay
+            if (touchDuration < 200) {
+                e.preventDefault();
+                overlay.style.opacity = overlay.style.opacity === '1' ? '0' : '1';
+            }
+        });
+        
+        // Remove 3D tilt effect on touch devices
+        card.removeEventListener('mousemove', () => {});
+        card.removeEventListener('mouseleave', () => {});
+    });
+} else {
+    // Keep existing hover effects for non-touch devices
+    projectCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 10;
+            const rotateY = (centerX - x) / 10;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+        });
+    });
+}
+
+// Improved mobile keyboard handling
+const formInputs = document.querySelectorAll('input, textarea');
+formInputs.forEach(input => {
+    // Prevent zoom on iOS when focusing inputs
+    input.addEventListener('touchstart', () => {
+        if (window.innerWidth <= 768) {
+            input.style.fontSize = '16px';
+        }
+    });
+    
+    // Handle virtual keyboard on mobile
+    input.addEventListener('focus', () => {
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+    });
+});
+
+// Improve scroll performance on mobile
+let ticking = false;
+function updateScrollEffects() {
+    // Existing scroll effects here
+    ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        requestAnimationFrame(updateScrollEffects);
+        ticking = true;
+    }
+});
+
+// Handle orientation change
+window.addEventListener('orientationchange', () => {
+    // Close mobile menu on orientation change
+    hamburger.classList.remove('active');
+    navMenu.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Recalculate viewport height
+    setTimeout(() => {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }, 100);
+});
+
+// Set initial viewport height for mobile
+const setVH = () => {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+};
+
+setVH();
+window.addEventListener('resize', setVH);
+
+// Improved touch feedback for buttons
+const touchElements = document.querySelectorAll('.btn, .social-link, .project-link, .skill-item');
+touchElements.forEach(element => {
+    element.addEventListener('touchstart', () => {
+        element.style.transform = 'scale(0.98)';
+    });
+    
+    element.addEventListener('touchend', () => {
+        element.style.transform = '';
+    });
+    
+    element.addEventListener('touchcancel', () => {
+        element.style.transform = '';
+    });
+});
+
+// Fix iOS Safari viewport height issues
+if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    const updateIOSHeight = () => {
+        document.documentElement.style.setProperty('--vh', `${window.innerHeight}px`);
+    };
+    
+    updateIOSHeight();
+    window.addEventListener('resize', updateIOSHeight);
+    window.addEventListener('orientationchange', updateIOSHeight);
+}
+
+// Prevent elastic scroll on iOS
+document.addEventListener('touchmove', (e) => {
+    if (e.target.closest('.nav-menu') || e.target.closest('.contact-form')) {
+        return; // Allow scrolling in menu and forms
+    }
+    
+    const isScrollable = e.target.scrollHeight > e.target.clientHeight;
+    if (!isScrollable) {
+        e.preventDefault();
+    }
+}, { passive: false });
 
 console.log('Portfolio loaded successfully! 🚀');
