@@ -628,3 +628,185 @@ document.addEventListener('touchmove', (e) => {
 }, { passive: false });
 
 console.log('Portfolio loaded successfully! 🚀');
+
+// Enhanced particle system for hero section
+function createFloatingElements() {
+    const hero = document.querySelector('.hero');
+    const particleCount = 15;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.style.cssText = `
+            position: absolute;
+            width: ${Math.random() * 8 + 4}px;
+            height: ${Math.random() * 8 + 4}px;
+            background: rgba(237, 219, 205, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float ${Math.random() * 10 + 10}s ease-in-out infinite;
+            animation-delay: ${Math.random() * 5}s;
+            top: ${Math.random() * 100}%;
+            left: ${Math.random() * 100}%;
+            z-index: 1;
+        `;
+        hero.appendChild(particle);
+    }
+}
+
+// Enhanced scroll animations
+function enhancedScrollAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, index * 100);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    const animateElements = document.querySelectorAll('.skill-item, .project-card, .education-card, .timeline-item, .stat, .about-text, .contact-info, .contact-form');
+    animateElements.forEach(el => {
+        el.classList.add('fade-in');
+        observer.observe(el);
+    });
+}
+
+// Magnetic effect for buttons
+function addMagneticEffect() {
+    const magneticElements = document.querySelectorAll('.btn, .project-link, .social-link');
+    
+    magneticElements.forEach(element => {
+        element.addEventListener('mousemove', (e) => {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            element.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) scale(1.05)`;
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            element.style.transform = 'translate(0px, 0px) scale(1)';
+        });
+    });
+}
+
+// Enhanced typing animation with cursor
+function enhancedTypeWriter(element, text, speed = 100) {
+    let i = 0;
+    element.innerHTML = '';
+    element.style.position = 'relative';
+    
+    // Add cursor
+    const cursor = document.createElement('span');
+    cursor.innerHTML = '|';
+    cursor.style.cssText = `
+        animation: blink 1s infinite;
+        color: #A6B6CA;
+        font-weight: 400;
+    `;
+    
+    // Add cursor animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    function type() {
+        if (i < text.length) {
+            element.innerHTML = text.slice(0, i + 1);
+            element.appendChild(cursor);
+            i++;
+            setTimeout(type, speed);
+        } else {
+            setTimeout(() => {
+                cursor.remove();
+            }, 2000);
+        }
+    }
+    type();
+}
+
+// Advanced parallax effect
+function advancedParallax() {
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        // Hero shapes parallax
+        const shapes = document.querySelectorAll('.shape');
+        shapes.forEach((shape, index) => {
+            const speed = 0.3 + (index * 0.1);
+            shape.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+        });
+        
+        // Hero background parallax
+        const heroBackground = document.querySelector('.hero-background');
+        if (heroBackground) {
+            heroBackground.style.transform = `translateY(${rate}px)`;
+        }
+    });
+}
+
+// Enhanced skill item interactions
+function enhanceSkillItems() {
+    const skillItems = document.querySelectorAll('.skill-item');
+    
+    skillItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            item.style.transform = 'translateY(-15px) scale(1.08) rotateZ(2deg)';
+            item.style.boxShadow = '0 15px 35px rgba(78, 80, 95, 0.2)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            item.style.transform = 'translateY(0) scale(1) rotateZ(0deg)';
+            item.style.boxShadow = '';
+        });
+    });
+}
+
+// Initialize enhanced animations
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        createFloatingElements();
+        enhancedScrollAnimations();
+        addMagneticEffect();
+        advancedParallax();
+        enhanceSkillItems();
+    }, 1000);
+});
+
+// Enhanced hero name typing animation
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const heroName = document.querySelector('.title-name');
+        if (heroName) {
+            const originalText = heroName.textContent;
+            enhancedTypeWriter(heroName, originalText, 120);
+        }
+    }, 2000);
+});
+
+// Add smooth page transitions
+function addPageTransitions() {
+    document.body.style.opacity = '0';
+    document.body.style.transform = 'translateY(20px)';
+    
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.body.style.transition = 'all 0.8s ease';
+            document.body.style.opacity = '1';
+            document.body.style.transform = 'translateY(0)';
+        }, 100);
+    });
+}
+
+addPageTransitions();
