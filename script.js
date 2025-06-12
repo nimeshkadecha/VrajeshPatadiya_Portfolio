@@ -810,3 +810,358 @@ function addPageTransitions() {
 }
 
 addPageTransitions();
+
+// Professional Canvas Particle System
+class ParticleSystem {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.mouse = { x: 0, y: 0 };
+        this.connectionDistance = 150;
+        this.maxParticles = 80;
+        
+        this.resize();
+        this.createParticles();
+        this.bindEvents();
+        this.animate();
+    }
+    
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+    
+    createParticles() {
+        this.particles = [];
+        for (let i = 0; i < this.maxParticles; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 3 + 1,
+                opacity: Math.random() * 0.8 + 0.2,
+                color: this.getRandomColor(),
+                pulse: Math.random() * Math.PI * 2,
+                pulseSpeed: 0.02 + Math.random() * 0.02
+            });
+        }
+    }
+    
+    getRandomColor() {
+        const colors = [
+            'rgba(237, 219, 205, 0.8)',
+            'rgba(166, 182, 202, 0.6)',
+            'rgba(139, 115, 85, 0.7)',
+            'rgba(255, 255, 255, 0.5)'
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+    
+    bindEvents() {
+        window.addEventListener('resize', () => this.resize());
+        
+        this.canvas.addEventListener('mousemove', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            this.mouse.x = e.clientX - rect.left;
+            this.mouse.y = e.clientY - rect.top;
+        });
+        
+        this.canvas.addEventListener('mouseleave', () => {
+            this.mouse.x = -1000;
+            this.mouse.y = -1000;
+        });
+    }
+    
+    drawParticle(particle) {
+        this.ctx.save();
+        this.ctx.globalAlpha = particle.opacity + Math.sin(particle.pulse) * 0.3;
+        this.ctx.fillStyle = particle.color;
+        this.ctx.beginPath();
+        this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+    }
+    
+    drawConnections() {
+        for (let i = 0; i < this.particles.length; i++) {
+            for (let j = i + 1; j < this.particles.length; j++) {
+                const dx = this.particles[i].x - this.particles[j].x;
+                const dy = this.particles[i].y - this.particles[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < this.connectionDistance) {
+                    const opacity = (1 - distance / this.connectionDistance) * 0.3;
+                    this.ctx.save();
+                    this.ctx.globalAlpha = opacity;
+                    this.ctx.strokeStyle = 'rgba(166, 182, 202, 0.4)';
+                    this.ctx.lineWidth = 1;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                    this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                    this.ctx.stroke();
+                    this.ctx.restore();
+                }
+            }
+        }
+    }
+    
+    drawMouseConnections() {
+        if (this.mouse.x < 0 || this.mouse.y < 0) return;
+        
+        for (let particle of this.particles) {
+            const dx = this.mouse.x - particle.x;
+            const dy = this.mouse.y - particle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 200) {
+                const opacity = (1 - distance / 200) * 0.6;
+                this.ctx.save();
+                this.ctx.globalAlpha = opacity;
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.mouse.x, this.mouse.y);
+                this.ctx.lineTo(particle.x, particle.y);
+                this.ctx.stroke();
+                this.ctx.restore();
+                
+                // Mouse attraction effect
+                const force = (200 - distance) / 200;
+                particle.vx += dx * force * 0.0001;
+                particle.vy += dy * force * 0.0001;
+            }
+        }
+        
+        // Draw mouse glow
+        this.ctx.save();
+        this.ctx.globalAlpha = 0.6;
+        const gradient = this.ctx.createRadialGradient(
+            this.mouse.x, this.mouse.y, 0,
+            this.mouse.x, this.mouse.y, 50
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        this.ctx.fillStyle = gradient;
+        this.ctx.beginPath();
+        this.ctx.arc(this.mouse.x, this.mouse.y, 50, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+    }
+    
+    updateParticles() {
+        for (let particle of this.particles) {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            particle.pulse += particle.pulseSpeed;
+            
+            // Apply gentle friction
+            particle.vx *= 0.99;
+            particle.vy *= 0.99;
+            
+            // Boundary collision with gentle bounce
+            if (particle.x < 0 || particle.x > this.canvas.width) {
+                particle.vx *= -0.5;
+                particle.x = Math.max(0, Math.min(this.canvas.width, particle.x));
+            }
+            if (particle.y < 0 || particle.y > this.canvas.height) {
+                particle.vy *= -0.5;
+                particle.y = Math.max(0, Math.min(this.canvas.height, particle.y));
+            }
+        }
+    }
+    
+    animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.updateParticles();
+        this.drawConnections();
+        
+        for (let particle of this.particles) {
+            this.drawParticle(particle);
+        }
+        
+        this.drawMouseConnections();
+        
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// Enhanced Mouse Trail Effect
+class MouseTrail {
+    constructor() {
+        this.trail = [];
+        this.maxTrailLength = 15;
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        
+        this.canvas.style.position = 'fixed';
+        this.canvas.style.top = '0';
+        this.canvas.style.left = '0';
+        this.canvas.style.pointerEvents = 'none';
+        this.canvas.style.zIndex = '9999';
+        this.canvas.style.opacity = '0.8';
+        
+        document.body.appendChild(this.canvas);
+        this.resize();
+        this.bindEvents();
+        this.animate();
+    }
+    
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+    
+    bindEvents() {
+        window.addEventListener('resize', () => this.resize());
+        
+        document.addEventListener('mousemove', (e) => {
+            this.trail.push({
+                x: e.clientX,
+                y: e.clientY,
+                time: Date.now()
+            });
+            
+            if (this.trail.length > this.maxTrailLength) {
+                this.trail.shift();
+            }
+        });
+    }
+    
+    animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        const now = Date.now();
+        this.trail = this.trail.filter(point => now - point.time < 1000);
+        
+        for (let i = 0; i < this.trail.length; i++) {
+            const point = this.trail[i];
+            const age = now - point.time;
+            const life = 1 - age / 1000;
+            const size = 8 * life;
+            const opacity = life * 0.6;
+            
+            this.ctx.save();
+            this.ctx.globalAlpha = opacity;
+            
+            const gradient = this.ctx.createRadialGradient(
+                point.x, point.y, 0,
+                point.x, point.y, size
+            );
+            gradient.addColorStop(0, 'rgba(166, 182, 202, 0.8)');
+            gradient.addColorStop(0.5, 'rgba(139, 115, 85, 0.4)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            this.ctx.fillStyle = gradient;
+            this.ctx.beginPath();
+            this.ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.restore();
+        }
+        
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// Enhanced Typography Animation
+function enhancedTypeWriter(element, text, speed = 80) {
+    let i = 0;
+    element.innerHTML = '';
+    element.style.position = 'relative';
+    
+    const cursor = document.createElement('span');
+    cursor.innerHTML = '|';
+    cursor.style.cssText = `
+        animation: blink 1s infinite;
+        color: #A6B6CA;
+        font-weight: 400;
+        margin-left: 2px;
+    `;
+    
+    function type() {
+        if (i < text.length) {
+            const char = text.charAt(i);
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.opacity = '0';
+            span.style.transform = 'translateY(20px)';
+            span.style.transition = 'all 0.3s ease';
+            
+            element.appendChild(span);
+            element.appendChild(cursor);
+            
+            setTimeout(() => {
+                span.style.opacity = '1';
+                span.style.transform = 'translateY(0)';
+            }, 50);
+            
+            i++;
+            setTimeout(type, speed + Math.random() * 50);
+        } else {
+            setTimeout(() => {
+                cursor.remove();
+            }, 2000);
+        }
+    }
+    type();
+}
+
+// Magnetic Button Effect
+function addMagneticButtons() {
+    const magneticElements = document.querySelectorAll('.btn, .social-link');
+    
+    magneticElements.forEach(element => {
+        element.addEventListener('mousemove', (e) => {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            const distance = Math.sqrt(x * x + y * y);
+            const maxDistance = 50;
+            
+            if (distance < maxDistance) {
+                const strength = (maxDistance - distance) / maxDistance;
+                const moveX = x * strength * 0.3;
+                const moveY = y * strength * 0.3;
+                
+                element.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+            }
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            element.style.transform = 'translate(0px, 0px) scale(1)';
+        });
+    });
+}
+
+// Initialize Professional Effects
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize canvas particle system
+    const heroCanvas = document.getElementById('heroCanvas');
+    if (heroCanvas) {
+        new ParticleSystem(heroCanvas);
+    }
+    
+    // Initialize mouse trail effect (only on desktop)
+    if (window.innerWidth > 768) {
+        new MouseTrail();
+    }
+    
+    // Add magnetic button effects
+    setTimeout(() => {
+        addMagneticButtons();
+    }, 1000);
+});
+
+// Enhanced hero name typing animation
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const heroName = document.querySelector('.name-highlight');
+        if (heroName) {
+            const originalText = heroName.textContent;
+            enhancedTypeWriter(heroName, originalText, 100);
+        }
+    }, 2500);
+});
