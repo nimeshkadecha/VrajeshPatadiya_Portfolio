@@ -1,0 +1,13 @@
+body {
+  cursor: none;
+}
+
+.cursor {
+  position: fixed;
+  width: 3px;
+  height: 20px;
+  background-color: #64ffda;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}

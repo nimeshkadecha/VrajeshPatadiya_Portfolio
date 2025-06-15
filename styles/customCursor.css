@@ -1,0 +1,54 @@
+body {
+  cursor: none;
+}
+
+.cursor {
+  position: fixed;
+  width: 8px;
+  height: 16px;
+  background: #64ffda; /* Typical dev portfolio accent color */
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  transition: width 0.2s, height 0.2s, opacity 0.2s;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.cursor-follower {
+  position: fixed;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #64ffda;
+  background: transparent;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: 0.08s ease-out;
+  mix-blend-mode: difference;
+}
+
+/* Code section highlight */
+pre:hover ~ .cursor, code:hover ~ .cursor {
+  width: 12px;
+  height: 24px;
+  background: #ffcc00;
+}
+
+/* Interactive elements */
+a:hover ~ .cursor, button:hover ~ .cursor, .clickable:hover ~ .cursor {
+  width: 3px;
+  height: 24px;
+  background: #64ffda;
+}
+
+.cursor.typing {
+  animation: none;
+  background: #64ffda;
+  width: 3px;
+}

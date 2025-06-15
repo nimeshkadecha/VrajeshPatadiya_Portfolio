@@ -33,31 +33,13 @@ body {
   background-color: var(--dark-color);
   color: var(--light-color);
   overflow-x: hidden;
-  cursor: none; /* Hide default cursor for custom cursor */
+  cursor: auto; /* Restore default cursor */
 }
 
-/* Custom Cursor */
+/* Custom Cursor - hide these elements */
 .cursor-dot,
 .cursor-outline {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  border-radius: 50%;
-  will-change: transform; /* Performance optimization */
-}
-
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  background-color: var(--accent-color);
-}
-
-.cursor-outline {
-  width: 40px;
-  height: 40px;
-  border: 2px solid var(--secondary-color);
+  display: none; /* Hide custom cursor elements */
 }
 
 /* Navigation */
