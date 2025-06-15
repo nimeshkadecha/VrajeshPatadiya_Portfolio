@@ -1642,8 +1642,6 @@ section {
   }
 }
 
-/* ... existing code ... */
-
 /* Landscape mode optimization */
 @media (max-height: 500px) and (orientation: landscape) {
   .hero-section {
@@ -1714,4 +1712,102 @@ section {
 /* selected link */
 #CreditNims:active {
   color: var(--accent-color);
+}
+
+/* Add Contact Section Responsive Styles (without changing existing style) */
+@media (max-width: 992px) {
+  .contact-container {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-container {
+    flex-direction: column;
+    gap: 50px;
+  }
+  
+  .info-item span {
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 576px) {
+  section#contact {
+    padding: 80px 20px;
+  }
+  
+  .contact-info h3 {
+    font-size: 1.8rem;
+  }
+  
+  .form-group input, 
+  .form-group textarea {
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+  
+  .form-group textarea {
+    min-height: 120px;
+  }
+  
+  .social-links {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 425px) {
+  .contact-info h3 {
+    font-size: 1.6rem;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .submit-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  section#contact {
+    padding: 60px 15px;
+  }
+  
+  .contact-info h3 {
+    font-size: 1.5rem;
+  }
+  
+  .contact-info p {
+    font-size: 1rem;
+  }
+  
+  .social-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 320px) {
+  section#contact {
+    padding: 50px 10px;
+  }
+  
+  .contact-info h3 {
+    font-size: 1.4rem;
+  }
+  
+  .info-item {
+    gap: 10px;
+  }
+  
+  .form-group input, 
+  .form-group textarea {
+    padding: 10px;
+  }
+  
+  .submit-btn {
+    padding: 12px 25px;
+  }
 }
