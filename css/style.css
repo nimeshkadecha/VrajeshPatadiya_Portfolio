@@ -84,6 +84,7 @@ body {
 .logo {
   font-size: 1.8rem;
   font-weight: 700;
+  z-index: 1001; /* Keep logo above mobile menu */
 }
 
 .artist-name {
@@ -96,6 +97,7 @@ body {
   display: flex;
   list-style: none;
   gap: 30px;
+  transition: var(--transition);
 }
 
 .nav-links a {
@@ -127,15 +129,32 @@ body {
 
 .menu-toggle {
   display: none;
-  /* cursor: none; */
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+  z-index: 1001; /* Keep toggle above the mobile menu */
 }
 
-.menu-toggle .bar {
-  width: 25px;
+.bar {
+  width: 100%;
   height: 3px;
   background-color: var(--light-color);
-  margin: 5px 0;
   transition: var(--transition);
+}
+
+/* Bar animations for active state */
+.bar-top-active {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.bar-middle-active {
+  opacity: 0;
+}
+
+.bar-bottom-active {
+  transform: translateY(-9px) rotate(-45deg);
 }
 
 /* Hero Section */
@@ -162,7 +181,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 90%;
+  width: 100%;
   max-width: 1400px;
   gap: 50px;
   position: relative;
@@ -179,7 +198,7 @@ body {
 .artist-image-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 100%; /* Make it square (1:1) for better responsiveness */
+  padding-top: 100%; /* Square aspect ratio */
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -398,6 +417,9 @@ section {
   text-align: center;
   margin-bottom: 80px;
   position: relative;
+  @media screen and (max-width: 768px) {
+    margin-bottom: 20px;
+  }
 }
 
 .section-header h2 {
@@ -436,6 +458,10 @@ section {
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 40px;
+  }
 }
 
 .about-text {
@@ -1230,10 +1256,178 @@ section {
 }
 
 @media (max-width: 992px) {
+  .main-nav {
+    padding: 15px 25px;
+  }
+  
+  .nav-scrolled {
+    padding: 12px 25px;
+  }
+  
+  .menu-toggle {
+    display: flex;
+  }
+  
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(45, 52, 54, 0.98);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    transform: translateX(100%);
+    z-index: 1000;
+  }
+  
+  .nav-active {
+    transform: translateX(0);
+  }
+  
+  .nav-links li {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.4s ease;
+    transition-delay: calc(0.1s * var(--i));
+  }
+  
+  .nav-active li {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .nav-links a {
+    font-size: 1.4rem;
+    padding: 10px 0;
+  }
+  
+  /* Mix-blend-mode can cause issues on mobile */
+  .main-nav {
+    mix-blend-mode: normal;
+  }
+  
+  /* Prevent scrolling when menu is open */
+  body.menu-open {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-nav {
+    padding: 12px 20px;
+  }
+  
+  .nav-scrolled {
+    padding: 10px 20px;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+  }
+  
+  .nav-links {
+    gap: 30px;
+    padding: 0 15px;
+  }
+  
+  .nav-links a {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .main-nav {
+    padding: 10px 15px;
+  }
+  
+  .nav-scrolled {
+    padding: 8px 15px;
+  }
+  
+  .logo {
+    font-size: 1.3rem;
+  }
+  
+  .nav-links {
+    gap: 25px;
+  }
+  
+  .nav-links a {
+    font-size: 1.1rem;
+  }
+  
+  .menu-toggle {
+    width: 25px;
+    height: 18px;
+  }
+  
+  .bar {
+    height: 2px;
+  }
+}
+
+/* Hero Section Fixes */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+}
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px;
+  gap: 50px;
+  position: relative;
+  z-index: 1;
+}
+
+.artist-image-container {
+  position: relative;
+  flex: 1;
+  max-width: 500px;
+  margin: 0 auto; /* Center on mobile */
+}
+
+.artist-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* Square aspect ratio */
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.artist-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.hero-text {
+  flex: 1;
+  max-width: 600px;
+}
+
+/* Improved Media Queries for Hero Section */
+@media (max-width: 992px) {
   .hero-content {
     flex-direction: column-reverse;
     text-align: center;
-    gap: 40px;
+    gap: 30px;
   }
   
   .hero-text {
@@ -1245,20 +1439,15 @@ section {
     width: 80%;
   }
   
-  .artist-image-wrapper {
-    padding-top: 100%; /* Keep it square */
-  }
-  
-  .typewriter {
-    margin: 0 auto;
-    font-size: 1.25rem;
-  }
-  
   .art-categories {
     justify-content: center;
   }
   
-  /* Adjust animation for the typewriter on medium screens */
+  /* Fix typewriter animation for centered text */
+  .typewriter {
+    margin: 0 auto;
+  }
+  
   @keyframes typing {
     from { width: 0 }
     to { width: 100%; max-width: 580px; margin: 0 auto; }
@@ -1267,8 +1456,7 @@ section {
 
 @media (max-width: 768px) {
   .hero-section {
-    padding: 60px 15px;
-    padding-top: 100px; /* Account for the navbar */
+    padding: 100px 15px 60px;
   }
   
   .hero-text h1 {
@@ -1277,10 +1465,6 @@ section {
   
   .typewriter {
     font-size: 1.1rem;
-    /* Adjust animation timing for smaller screens */
-    animation: 
-      typing 4s steps(40, end) 1s forwards,
-      blink-caret 0.75s step-end infinite;
   }
   
   .art-categories span {
@@ -1295,8 +1479,12 @@ section {
 }
 
 @media (max-width: 576px) {
+  .hero-section {
+    padding: 90px 12px 40px;
+  }
+  
   .hero-text h1 {
-    font-size: 2.4rem;
+    font-size: 2.3rem;
   }
   
   .artist-image-container {
@@ -1305,17 +1493,7 @@ section {
   }
   
   .typewriter {
-    font-size: 1rem;
-    /* Further adjust animation for mobile */
-    animation: 
-      typing 5s steps(40, end) 1s forwards,
-      blink-caret 0.75s step-end infinite;
-  }
-  
-  /* Simplify glitch effect on small screens for better performance */
-  .glitch-effect::before,
-  .glitch-effect::after {
-    animation-duration: 3s;
+    font-size: 0.95rem;
   }
   
   .art-categories {
@@ -1327,22 +1505,15 @@ section {
     padding: 5px 12px;
     font-size: 0.8rem;
   }
-  
-  .cta-button {
-    padding: 10px 25px;
-    font-size: 0.9rem;
-    margin-top: 10px;
-  }
 }
 
-@media (max-width: 375px) {
+@media (max-width: 425px) {
   .hero-section {
-    padding: 50px 10px;
-    padding-top: 90px;
+    padding: 80px 10px 30px;
   }
   
   .hero-text h1 {
-    font-size: 2.1rem;
+    font-size: 2rem;
     margin-bottom: 15px;
   }
   
@@ -1352,10 +1523,6 @@ section {
   
   .typewriter {
     font-size: 0.9rem;
-    /* Optimize animation timing for very small screens */
-    animation: 
-      typing 5.5s steps(35, end) 1s forwards,
-      blink-caret 0.75s step-end infinite;
   }
   
   .art-categories {
@@ -1369,34 +1536,113 @@ section {
   }
   
   .cta-button {
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    margin-top: 15px;
+  }
+  
+  /* Simplify glitch effect on small screens */
+  .glitch-effect::before,
+  .glitch-effect::after {
+    animation-duration: 4s;
+  }
+}
+
+@media (max-width: 375px) {
+  .hero-text h1 {
+    font-size: 1.8rem;
+  }
+  
+  .artist-image-container {
+    max-width: 220px;
+  }
+  
+  .typewriter {
+    font-size: 0.85rem;
+  }
+  
+  .art-categories span {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+  
+  .cta-button {
     padding: 8px 20px;
     font-size: 0.85rem;
   }
 }
 
 @media (max-width: 320px) {
+  .hero-section {
+    padding: 70px 8px 25px;
+  }
+  
+  .hero-content {
+    gap: 20px;
+  }
+  
   .hero-text h1 {
-    font-size: 1.9rem;
+    font-size: 1.6rem;
+    margin-bottom: 10px;
   }
   
   .artist-image-container {
-    max-width: 200px;
+    max-width: 180px;
   }
   
   .typewriter {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    /* Adjust animation to work with smaller screens */
+    animation: 
+      typing 6s steps(30, end) 1s forwards,
+      blink-caret 0.75s step-end infinite;
+  }
+  
+  .art-categories {
+    margin: 12px 0;
+    gap: 6px;
   }
   
   .art-categories span {
-    padding: 3px 8px;
-    font-size: 0.7rem;
+    padding: 3px 6px;
+    font-size: 0.65rem;
   }
   
   .cta-button {
-    padding: 7px 18px;
+    padding: 7px 16px;
     font-size: 0.8rem;
+    margin-top: 10px;
+  }
+  
+  /* Override the animation for 320px */
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100%; max-width: 260px; margin: 0 auto; }
   }
 }
+
+/* Fix for very small devices to ensure text readability */
+@media (max-width: 280px) {
+  .hero-text h1 {
+    font-size: 1.4rem;
+  }
+  
+  .typewriter {
+    font-size: 0.7rem;
+  }
+  
+  .art-categories span {
+    padding: 2px 5px;
+    font-size: 0.6rem;
+  }
+  
+  .cta-button {
+    padding: 6px 14px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ... existing code ... */
 
 /* Landscape mode optimization */
 @media (max-height: 500px) and (orientation: landscape) {

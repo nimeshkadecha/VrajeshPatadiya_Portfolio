@@ -86,12 +86,19 @@ function initNavigation() {
   const menuToggle = document.querySelector(".menu-toggle");
   const navLinks = document.querySelector(".nav-links");
   const nav = document.querySelector(".main-nav");
+  const navItems = document.querySelectorAll(".nav-links li");
+  const body = document.body;
+
+  // Add index for staggered animation
+  navItems.forEach((item, index) => {
+    item.style.setProperty("--i", index);
+  });
 
   // Toggle mobile menu
   if (menuToggle) {
     menuToggle.addEventListener("click", () => {
       navLinks.classList.toggle("nav-active");
-      menuToggle.classList.toggle("active");
+      body.classList.toggle("menu-open");
 
       // Animate hamburger to X
       const bars = menuToggle.querySelectorAll(".bar");
@@ -101,6 +108,22 @@ function initNavigation() {
     });
   }
 
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    const isNavLink = e.target.closest(".nav-links");
+    const isMenuToggle = e.target.closest(".menu-toggle");
+    
+    if (!isNavLink && !isMenuToggle && navLinks.classList.contains("nav-active")) {
+      navLinks.classList.remove("nav-active");
+      body.classList.remove("menu-open");
+      
+      const bars = menuToggle.querySelectorAll(".bar");
+      bars[0].classList.remove("bar-top-active");
+      bars[1].classList.remove("bar-middle-active");
+      bars[2].classList.remove("bar-bottom-active");
+    }
+  });
+
   // Smooth scroll for navigation links
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
@@ -109,7 +132,12 @@ function initNavigation() {
       // Close mobile menu if open
       if (navLinks.classList.contains("nav-active")) {
         navLinks.classList.remove("nav-active");
-        menuToggle.classList.remove("active");
+        body.classList.remove("menu-open");
+        
+        const bars = menuToggle.querySelectorAll(".bar");
+        bars[0].classList.remove("bar-top-active");
+        bars[1].classList.remove("bar-middle-active");
+        bars[2].classList.remove("bar-bottom-active");
       }
 
       const targetId = this.getAttribute("href");
