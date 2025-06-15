@@ -1069,7 +1069,139 @@ section {
   text-align: center;
 }
 
-/* Responsive Styles */
+/* Developer Project Modal Styles */
+.dev-project-modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.dev-project-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  opacity: 0.2;
+  z-index: 0;
+  transform: scale(1.1);
+}
+
+.dev-project-content {
+  position: relative;
+  z-index: 1;
+  padding: 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.dev-project-title {
+  font-size: 2.5rem;
+  margin-bottom: 25px;
+  color: var(--light-color);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.dev-project-description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 30px;
+  white-space: pre-line;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dev-project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: auto;
+  align-items: center;
+}
+
+.dev-project-tech {
+  flex: 1;
+}
+
+.dev-project-tech h4 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: var(--secondary-color);
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tech-tag {
+  padding: 8px 16px;
+  background: rgba(108, 92, 231, 0.2);
+  border: 1px solid var(--primary-color);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: var(--light-color);
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.tech-tag:hover {
+  background: var(--primary-color);
+  transform: translateY(-3px);
+}
+
+.dev-project-live {
+  display: inline-block;
+  padding: 12px 30px;
+  background: var(--accent-color);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 15px rgba(0, 184, 148, 0.3);
+  text-align: center;
+}
+
+.dev-project-live:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px rgba(0, 184, 148, 0.4);
+  background-color: #00d1a7;
+}
+
+/* Make sure navigation buttons stay at the bottom */
+.dev-project-modal + .modal-navigation {
+  margin-top: auto;
+  background: rgba(34, 34, 34, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments for developer project modal */
+@media (max-width: 768px) {
+  .dev-project-title {
+    font-size: 2rem;
+  }
+  
+  .dev-project-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  
+  .dev-project-live {
+    width: 100%;
+  }
+}
+
 @media (max-width: 1200px) {
   .hero-text h1 {
     font-size: 3.5rem;
