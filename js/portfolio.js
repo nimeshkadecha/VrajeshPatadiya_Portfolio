@@ -9,12 +9,11 @@ const portfolioItems = [
 • Lazy loading for performance optimization
 • Section reveal on scroll
 • Sticky navigation and page transitions
-• Modal for login and tabbed account features
-Tech Used: HTML, CSS, JavaScript (DOM manipulation, Intersection Observer API)`,
+• Modal for login and tabbed account features`,
     thumbnail: "assets/portfolio/thumbnails/bankistWeb.jpg",
     image: "assets/portfolio/bankistWeb.jpg",
     ViewLive: "http://vrajeshz.github.io/Bankist-Web/",
-    technologyTag: "HTML, CSS, JavaScript",
+    technologyTag: "HTML, CSS, JavaScript (DOM manipulation) Intersection Observer API",
     category: "websites",
   },
   {
@@ -27,14 +26,65 @@ Features Implemented:
 • Sticky navigation and smooth scrolling
 • Responsive design with media queries
 • Testimonials, pricing plans, and contact form
-• Layout built with flexbox and grid
-Tech Used: HTML, CSS (Flexbox, Grid), JavaScript (basic DOM events)`,
+• Layout built with flexbox and grid`,
     thumbnail: "assets/portfolio/thumbnails/omnifood.jpg",
     image: "assets/portfolio/omnifood.jpg",
-    ViewLive: "http://vrajeshz.github.io/Bankist-Web/",
-    technologyTag: "HTML, CSS, JavaScript",
+    ViewLive: "http://vrajeshz.github.io/Omnifood/",
+    technologyTag: "HTML, CSS (Flexbox Grid), JavaScript (basic DOM events)",
     category: "websites",
   },
+  {
+    id: 3,
+    title: "🏦 Bankist – Functional Banking Web App",
+    description:
+      `A fully functional banking web application where users can securely manage their accounts. This project simulates real-world banking operations with a clean, interactive design.
+Features Implemented:
+• User login and logout
+• Check account balance and transaction history
+• Money transfer between users
+• Loan request based on transaction history
+• Account closure functionality
+• Auto logout after inactivity`,
+    thumbnail: "assets/portfolio/thumbnails/bankist.jpg",
+    image: "assets/portfolio/bankist.jpg",
+    ViewLive: "http://vrajeshz.github.io/Bankist/",
+    technologyTag: "HTML, CSS, JavaScript (Array methods event handling timers)",
+    category: "websites",
+  },
+  {
+    id: 4,
+    title: "🎲 Greedy Game – Two Player Dice Challenge",
+    description:
+      `A fun, turn-based dice game where two players compete to reach 100 points. Players roll the dice to build their score but risk losing their turn if they roll a 1. Strategic use of the "Hold" button adds a layer of decision-making to the gameplay.
+Features Implemented:
+• Two-player game logic
+• Scoreboard for current and total scores
+• Dice roll animations
+• Game reset functionality
+• Win detection and UI update`,
+    thumbnail: "assets/portfolio/thumbnails/GreedyGame.jpg",
+    image: "assets/portfolio/GreedyGame.jpg",
+    ViewLive: "https://vrajeshz.github.io/Greedy-Game/",
+    technologyTag: "HTML, CSS, JavaScript (DOM manipulation game logic)",
+    category: "websites",
+  },
+  {
+    id: 5,
+    title: "🎲 Greedy Game – Two Player Dice Challenge",
+    description:
+      `A fun single-player game where the player guesses a randomly generated number between 1 and 20. After each guess, real-time feedback guides the player closer to the correct number. The game includes scoring and a high score tracker to encourage replayability.
+Features Implemented:
+• Random number generation
+• Feedback based on user input
+• Score tracking and high score saving
+• Restart game without page reload
+• Dynamic UI updates based on game state`,
+    thumbnail: "assets/portfolio/thumbnails/guessTheNumber.jpg",
+    image: "assets/portfolio/guessTheNumber.jpg",
+    ViewLive: "http://vrajeshz.github.io/Guess-the-Number/",
+    technologyTag: "HTML, CSS, JavaScript (DOM manipulation conditionals)",
+    category: "websites",
+  }
 ];
 
 // Sort the portfolioItems array by id
