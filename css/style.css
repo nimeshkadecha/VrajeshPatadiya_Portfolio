@@ -1010,9 +1010,17 @@ section {
   transition: var(--transition);
 }
 
-.social-icon:hover {
-  background-color: var(--primary-color);
-  transform: translateY(-5px);
+/* Leetcode icon styling */
+.social-icon img {
+  width: 20px;
+  height: 20px;
+  filter: invert(1); /* Make SVG white to match other icons */
+  transition: var(--transition);
+}
+
+.social-icon:hover img {
+  filter: invert(1) brightness(1.1); /* Keep it white but slightly brighter on hover */
+  transform: scale(1.1);
 }
 
 .contact-form {
