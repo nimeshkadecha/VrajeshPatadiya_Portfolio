@@ -190,8 +190,11 @@ function initPortfolio() {
     }
   }
 
-  // 3D hover effect
+  // 3D hover effect - improved for stability
   function handleHover3D(e) {
+    // Don't process if we're already transitioning
+    if (this.isTransitioning) return;
+    
     const item = this;
     const { left, top, width, height } = item.getBoundingClientRect();
     const x = e.clientX - left;
@@ -199,15 +202,50 @@ function initPortfolio() {
     const centerX = width / 2;
     const centerY = height / 2;
 
-    const rotateX = (y - centerY) / 10;
-    const rotateY = (centerX - x) / 10;
+    // Limit the rotation angle to prevent extreme tilting
+    const maxRotation = 8;
+    const rotateX = Math.max(Math.min((y - centerY) / 10, maxRotation), -maxRotation);
+    const rotateY = Math.max(Math.min((centerX - x) / 10, maxRotation), -maxRotation);
 
+    // Apply transform with hardware acceleration
     item.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    
+    // Ensure image stays visible
+    const img = item.querySelector('img');
+    if (img) {
+      img.style.transform = 'scale(1.1)';
+    }
   }
 
   function resetHover3D() {
-    this.style.transform =
-      "perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)";
+    const item = this;
+    
+    // Mark as transitioning to prevent new hover events during reset
+    item.isTransitioning = true;
+    
+    // Use GSAP for smoother reset animation
+    gsap.to(item, {
+      rotateX: 0,
+      rotateY: 0,
+      scale: 1,
+      duration: 0.4,
+      ease: "power2.out",
+      clearProps: "transform", // Clean up props after animation
+      onComplete: function() {
+        item.isTransitioning = false;
+        item.style.transform = "perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)";
+      }
+    });
+    
+    // Reset the image scale
+    const img = item.querySelector('img');
+    if (img) {
+      gsap.to(img, {
+        scale: 1,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    }
   }
 
   // Enhanced animation for portfolio items
@@ -331,7 +369,7 @@ function initPortfolio() {
     }
   }
 
-  // Enhanced hover effects
+  // Enhanced hover effects with improved stability
   function addHoverEffects() {
     const portfolioItems = document.querySelectorAll(".portfolio-item");
 
@@ -342,13 +380,15 @@ function initPortfolio() {
       // Create hover timeline for each item
       const hoverTl = gsap.timeline({ paused: true });
 
+      // More conservative scale to prevent flickering
       hoverTl.to(
         img,
         {
-          scale: 1.1,
+          scale: 1.08,
           filter: "brightness(0.8) contrast(1.2)",
-          duration: 0.5,
+          duration: 0.4,
           ease: "power2.out",
+          force3D: true // Force hardware acceleration
         },
         0
       );
@@ -360,6 +400,7 @@ function initPortfolio() {
           opacity: 1,
           duration: 0.4,
           ease: "power2.out",
+          force3D: true
         },
         0
       );
@@ -390,40 +431,79 @@ function initPortfolio() {
         );
       }
 
-      // Handle mouse events
-      item.addEventListener("mouseenter", () => hoverTl.play());
-      item.addEventListener("mouseleave", () => hoverTl.reverse());
+      // Throttle function for mousemove events
+      const throttledMouseMove = throttle(function(e) {
+        // Only run 3D tilt if we're not currently resetting
+        if (!item.isTransitioning) {
+          const rect = item.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
 
-      // 3D tilt effect
-      item.addEventListener("mousemove", (e) => {
-        const rect = item.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+          // Limit rotation for stability
+          const maxRotate = 8;
+          const rotateX = Math.max(Math.min((y - centerY) / 15, maxRotate), -maxRotate);
+          const rotateY = Math.max(Math.min((centerX - x) / 15, maxRotate), -maxRotate);
 
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
+          gsap.to(item, {
+            rotateX: rotateX,
+            rotateY: rotateY,
+            transformPerspective: 1000,
+            duration: 0.4,
+            ease: "power1.out",
+            force3D: true
+          });
+        }
+      }, 16); // ~60fps
 
-        gsap.to(item, {
-          rotateX: rotateX,
-          rotateY: rotateY,
-          transformPerspective: 1000,
-          duration: 0.4,
-          ease: "power1.out",
-        });
+      // Handle mouse events with improved stability
+      item.addEventListener("mouseenter", () => {
+        // Prevent rapid hover in/out issues
+        if (item.hoverTimeout) {
+          clearTimeout(item.hoverTimeout);
+          item.hoverTimeout = null;
+        }
+        
+        hoverTl.play();
+        item.isHovering = true;
       });
-
+      
       item.addEventListener("mouseleave", () => {
-        gsap.to(item, {
-          rotateX: 0,
-          rotateY: 0,
-          scale: 1,
-          duration: 0.6,
-          ease: "elastic.out(1, 0.5)",
-        });
+        // Slight delay before reversing to prevent flicker on edges
+        item.hoverTimeout = setTimeout(() => {
+          hoverTl.reverse();
+          gsap.to(item, {
+            rotateX: 0,
+            rotateY: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.5)",
+            force3D: true,
+            onComplete: () => {
+              item.isHovering = false;
+            }
+          });
+        }, 50);
       });
+
+      // Use throttled mousemove for 3D effect
+      item.addEventListener("mousemove", throttledMouseMove);
     });
+  }
+
+  // Throttle helper function for mousemove
+  function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+      const args = arguments;
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    }
   }
 
   // Enhance filter functionality with animations
