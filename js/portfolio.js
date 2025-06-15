@@ -399,88 +399,47 @@ function initPortfolio() {
     // Clear previous modal content
     const modalContent = modal.querySelector(".modal-content");
     
-    // Check if it's a developer project (id:1)
-    if (item.id === 1) {
-      // Developer project specialized layout
-      modalContent.innerHTML = `
-        <span class="close-modal">&times;</span>
-        <div class="dev-project-modal">
-          <div class="dev-project-bg" style="background-image: url('${item.image}')"></div>
-          <div class="dev-project-content">
-            <h2 class="dev-project-title">${item.title}</h2>
-            <div class="dev-project-description">${item.description}</div>
-            <div class="dev-project-meta">
-              <div class="dev-project-tech">
-                <h4>Technologies</h4>
-                <div class="tech-tags">
-                  ${item.technologyTag.split(',').map(tech => `<span class="tech-tag">${tech.trim()}</span>`).join('')}
-                </div>
+    // Apply developer project specialized layout to all projects
+    modalContent.innerHTML = `
+      <span class="close-modal">&times;</span>
+      <div class="dev-project-modal">
+        <div class="dev-project-bg" style="background-image: url('${item.image}')"></div>
+        <div class="dev-project-content">
+          <h2 class="dev-project-title">${item.title}</h2>
+          <div class="dev-project-description">${item.description}</div>
+          <div class="dev-project-meta">
+            <div class="dev-project-tech">
+              <h4>Technologies</h4>
+              <div class="tech-tags">
+                ${item.technologyTag.split(',').map(tech => `<span class="tech-tag">${tech.trim()}</span>`).join('')}
               </div>
-              ${item.ViewLive ? `<a href="${item.ViewLive}" class="dev-project-live" target="_blank">View Live Demo</a>` : ''}
             </div>
+            ${item.ViewLive ? `<a href="${item.ViewLive}" class="dev-project-live" target="_blank">View Live Demo</a>` : ''}
           </div>
         </div>
-        <div class="modal-navigation">
-          <button class="modal-prev">Previous</button>
-          <button class="modal-next">Next</button>
-        </div>
-      `;
-      
-      // Re-add event listeners for close button
-      const closeBtn = modalContent.querySelector(".close-modal");
-      if (closeBtn) {
-        closeBtn.addEventListener("click", closeModal);
-      }
-      
-      // Re-add event listeners for navigation
-      const prevButton = modalContent.querySelector(".modal-prev");
-      const nextButton = modalContent.querySelector(".modal-next");
-      
-      if (prevButton) {
-        prevButton.addEventListener("click", () => navigateModal("prev"));
-      }
-      
-      if (nextButton) {
-        nextButton.addEventListener("click", () => navigateModal("next"));
-      }
-    } else {
-      // Standard modal display for non-developer projects
-      const modalImage = modal.querySelector(".modal-image");
-      const modalTitle = modal.querySelector(".modal-title");
-      const modalDesc = modal.querySelector(".modal-description");
-      const modalCategory = modal.querySelector(".modal-category");
-
-      // Show loading state
-      if (modalImage) {
-        modalImage.classList.add("loading");
-        modalImage.src = item.thumbnail; // Show thumbnail first
-
-        // Always update to full image regardless of preloading status
-        const updateFullImage = () => {
-          modalImage.src = item.image;
-          modalImage.classList.remove("loading");
-        };
-
-        // Check if image is already preloaded
-        if (preloadedImages.has(item.id)) {
-          // If already preloaded, switch to full image immediately
-          setTimeout(updateFullImage, 100); // Small timeout for smoother transition
-        } else {
-          // If not preloaded, load it now
-          const fullImg = new Image();
-          fullImg.onload = updateFullImage;
-          fullImg.onerror = () => {
-            console.warn(`Failed to load image: ${item.image}`);
-            modalImage.classList.remove("loading");
-          };
-          fullImg.src = item.image;
-          preloadedImages.set(item.id, fullImg);
-        }
-      }
-
-      if (modalTitle) modalTitle.textContent = item.title;
-      if (modalDesc) modalDesc.textContent = item.description;
-      if (modalCategory) modalCategory.textContent = `Category: ${item.category}`;
+      </div>
+      <div class="modal-navigation">
+        <button class="modal-prev">Previous</button>
+        <button class="modal-next">Next</button>
+      </div>
+    `;
+    
+    // Re-add event listeners for close button
+    const closeBtn = modalContent.querySelector(".close-modal");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeModal);
+    }
+    
+    // Re-add event listeners for navigation
+    const prevButton = modalContent.querySelector(".modal-prev");
+    const nextButton = modalContent.querySelector(".modal-next");
+    
+    if (prevButton) {
+      prevButton.addEventListener("click", () => navigateModal("prev"));
+    }
+    
+    if (nextButton) {
+      nextButton.addEventListener("click", () => navigateModal("next"));
     }
 
     // Show modal with animation
