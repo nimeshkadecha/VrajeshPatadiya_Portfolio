@@ -10,7 +10,7 @@ const portfolioItems = [
 • Section reveal on scroll
 • Sticky navigation and page transitions
 • Modal for login and tabbed account features
-Tech Used: HTML, CSS, JavaScript (DOM manipulation, Intersection Observer API)`,
+Tech Used: HTML, CSS, JavaScript (DOM manipulation, Intersection Observer API)`,
     thumbnail: "assets/portfolio/thumbnails/bankistWeb.jpg",
     image: "assets/portfolio/bankistWeb.jpg",
     ViewLive: "http://vrajeshz.github.io/Bankist-Web/",
@@ -28,7 +28,7 @@ Features Implemented:
 • Responsive design with media queries
 • Testimonials, pricing plans, and contact form
 • Layout built with flexbox and grid
-Tech Used: HTML, CSS (Flexbox, Grid), JavaScript (basic DOM events)`,
+Tech Used: HTML, CSS (Flexbox, Grid), JavaScript (basic DOM events)`,
     thumbnail: "assets/portfolio/thumbnails/omnifood.jpg",
     image: "assets/portfolio/omnifood.jpg",
     ViewLive: "http://vrajeshz.github.io/Bankist-Web/",
@@ -40,8 +40,30 @@ Tech Used: HTML, CSS (Flexbox, Grid), JavaScript (basic DOM events)`,
 // Sort the portfolioItems array by id
 portfolioItems.sort((a, b) => a.id - b.id);
 
+// Self-executing function to ensure portfolio is initialized
+(function() {
+  // Log portfolio items to check if they exist
+  console.log("Portfolio items:", portfolioItems);
+  
+  // Call initPortfolio directly to ensure it runs
+  document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM loaded, initializing portfolio");
+    initPortfolio();
+  });
+})();
+
 function initPortfolio() {
+  console.log("Initializing portfolio...");
   const portfolioGrid = document.querySelector(".portfolio-grid");
+  
+  // Debug check if portfolio grid exists
+  if (!portfolioGrid) {
+    console.error("Portfolio grid element not found. Make sure the HTML contains an element with class 'portfolio-grid'");
+    return;
+  }
+  
+  console.log("Portfolio grid found:", portfolioGrid);
+  
   const filterButtons = document.querySelectorAll(".filter-btn");
   const modal = document.querySelector(".portfolio-modal");
   let currentCategory = "all";
@@ -50,6 +72,8 @@ function initPortfolio() {
 
   // Create portfolio items
   function renderPortfolioItems(category) {
+    console.log("Rendering portfolio items for category:", category);
+    
     // Clear grid
     if (portfolioGrid) portfolioGrid.innerHTML = "";
 
@@ -58,6 +82,8 @@ function initPortfolio() {
       category === "all"
         ? portfolioItems
         : portfolioItems.filter((item) => item.category === category);
+
+    console.log("Filtered items:", filteredItems);
 
     if (filteredItems.length === 0) {
       portfolioGrid.innerHTML =
@@ -92,6 +118,7 @@ function initPortfolio() {
       });
 
       portfolioGrid.appendChild(portfolioItem);
+      console.log("Added portfolio item:", item.title);
     });
 
     // Add animation to items
@@ -435,11 +462,15 @@ function initPortfolio() {
     const nextButton = modalContent.querySelector(".modal-next");
     
     if (prevButton) {
-      prevButton.addEventListener("click", () => navigateModal("prev"));
+      prevButton.addEventListener("click", function() {
+        navigateModal("prev");
+      });
     }
     
     if (nextButton) {
-      nextButton.addEventListener("click", () => navigateModal("next"));
+      nextButton.addEventListener("click", function() {
+        navigateModal("next");
+      });
     }
 
     // Show modal with animation
@@ -497,83 +528,31 @@ function initPortfolio() {
 
   // Modal navigation with fixed functionality and optimized image loading
   function navigateModal(direction) {
+    if (!modal) return;
+    
     let filteredItems =
       currentCategory === "all"
         ? portfolioItems
         : portfolioItems.filter((item) => item.category === currentCategory);
 
-    if (filteredItems.length === 0) return;
+    if (filteredItems.length <= 1) return; // Don't navigate if only one item
 
     let newIndex;
     if (direction === "next") {
-      newIndex = (currentItemIndex + 1) % filteredItems.length;
+      newIndex = (currentItemIndex + 1) % portfolioItems.length;
     } else {
       newIndex =
         currentItemIndex - 1 < 0
-          ? filteredItems.length - 1
+          ? portfolioItems.length - 1
           : currentItemIndex - 1;
     }
 
     // Find the item in the entire portfolioItems array
-    const newItemId = filteredItems[newIndex].id;
-    const newItem = portfolioItems.find((item) => item.id === newItemId);
-    currentItemIndex = portfolioItems.indexOf(newItem);
+    const newItem = portfolioItems[newIndex];
+    currentItemIndex = newIndex;
 
-    // Update modal content with animation
-    const modalImage = modal.querySelector(".modal-image");
-    const modalTitle = modal.querySelector(".modal-title");
-    const modalDesc = modal.querySelector(".modal-description");
-    const modalCategory = modal.querySelector(".modal-category");
-    // const modalDate = modal.querySelector(".modal-date");
-
-    // Fade out current content
-    gsap.to([modalTitle, modalDesc, modalCategory], {
-      opacity: 0,
-      y: direction === "next" ? -20 : 20,
-      duration: 0.3,
-      onComplete: () => {
-        // Update content
-        if (modalImage) {
-          modalImage.classList.add("loading");
-          // Use thumbnail first for fast transition
-          modalImage.src = newItem.thumbnail;
-
-          // Then load full image if needed
-          if (preloadedImages.has(newItem.id)) {
-            // We already have the preloaded image
-            setTimeout(() => {
-              modalImage.src = newItem.image;
-              modalImage.classList.remove("loading");
-            }, 50); // Small delay for smoother transition
-          } else {
-            // Need to load the full image
-            const fullImg = new Image();
-            fullImg.onload = function () {
-              modalImage.src = newItem.image;
-              modalImage.classList.remove("loading");
-              preloadedImages.set(newItem.id, fullImg);
-            };
-            fullImg.src = newItem.image;
-          }
-        }
-
-        if (modalTitle) modalTitle.textContent = newItem.title;
-        if (modalDesc) modalDesc.textContent = newItem.description;
-        if (modalCategory)
-          modalCategory.textContent = `Category: ${newItem.category}`;
-        // if (modalDate) modalDate.textContent = `Created: ${newItem.date}`;
-
-        // Fade in new content
-        gsap.to([modalTitle, modalDesc, modalCategory], {
-          opacity: 1,
-          y: 0,
-          duration: 0.3,
-        });
-
-        // Preload the next image in the navigation sequence for smoother experience
-        preloadAdjacentImages(currentItemIndex);
-      },
-    });
+    // Open the modal with the new item
+    openModal(newItem.id);
   }
 
   // Fix modal navigation button click handlers
@@ -616,7 +595,16 @@ function initPortfolio() {
   });
 
   // Initialize portfolio with all items
+  console.log("Rendering all portfolio items");
   renderPortfolioItems("all");
+  
+  // Add a fallback in case the initial render didn't work
+  setTimeout(() => {
+    if (portfolioGrid.children.length === 0) {
+      console.log("No items rendered, trying again...");
+      renderPortfolioItems("all");
+    }
+  }, 1000);
 
   // Add event listener for window resize to optimize particle effect
   window.addEventListener(

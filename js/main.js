@@ -8,13 +8,15 @@ document.addEventListener("DOMContentLoaded", function () {
   // Lazy initialize other components
   initScrollAnimations();
 
-  // Use requestIdleCallback for non-critical initializations if supported
+  // Initialize portfolio directly instead of using requestIdleCallback
+  console.log("Main.js: Initializing portfolio");
+  initPortfolio();
+  
+  // Use requestIdleCallback only for custom cursor
   if ("requestIdleCallback" in window) {
-    requestIdleCallback(() => initPortfolio());
     requestIdleCallback(() => initCustomCursor());
   } else {
     // Fallback for browsers that don't support requestIdleCallback
-    setTimeout(() => initPortfolio(), 100);
     setTimeout(() => initCustomCursor(), 200);
   }
 
