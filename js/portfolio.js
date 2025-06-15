@@ -13,7 +13,7 @@ const portfolioItems = [
 Tech Used: HTML, CSS, JavaScript (DOM manipulation, Intersection Observer API)`,
     thumbnail: "assets/portfolio/thumbnails/bankistWeb.jpg",
     image: "assets/portfolio/bankistWeb.jpg",
-    ViewLive: "https://bankist-web.netlify.app/",
+    ViewLive: "http://vrajeshz.github.io/Bankist-Web/",
     technologyTag: "HTML, CSS, JavaScript",
     category: "websites",
   },
@@ -21,37 +21,19 @@ Tech Used: HTML, CSS, JavaScript (DOM manipulation, Intersection Observer API)
     id: 2,
     title: "🍽 Omnifood – Smart Food Delivery Website",
     description:
-      "Atmospheric loading screen design with gradient background and decorative elements creating visual interest while players wait.",
-    category: "backgrounds",
-    thumbnail: "assets/portfolio/thumbnails/acs.webp",
-    image: "assets/portfolio/acs.webp",
-  },
-  {
-    id: 3,
-    title: "🏦 Bankist – Functional Banking Web App",
-    description:
-      "Playful game icon featuring an adorable cat character with appealing colors and shapes designed for high visibility in app stores.",
-    category: "icons",
-    thumbnail: "assets/portfolio/thumbnails/catIcon.webp",
-    image: "assets/portfolio/catIcon.webp",
-  },
-  {
-    id: 4,
-    title: "🎲 Pig Game – Two Player Dice Challenge",
-    description:
-      "Warm and inviting loading screen for Cooking Valley game with food-themed visuals that establish the game's culinary atmosphere.",
-    category: "backgrounds",
-    thumbnail: "assets/portfolio/thumbnails/cookingVeli.webp",
-    image: "assets/portfolio/cookingVeli.webp",
-  },
-  {
-    id: 5,
-    title: "Story board",
-    description:
-      "Sequential storyboard panels illustrating game narrative flow with clear visual progression and character interactions.",
-    category: "backgrounds",
-    thumbnail: "assets/portfolio/thumbnails/storyBoard.webp",
-    image: "assets/portfolio/storyBoard.webp",
+      `A responsive, modern website for a fictional AI-powered food delivery service. Designed using clean layout principles and mobile-first workflow, it ensures a seamless experience on all screen sizes.
+Features Implemented:
+• Hero section with call-to-action
+• Sticky navigation and smooth scrolling
+• Responsive design with media queries
+• Testimonials, pricing plans, and contact form
+• Layout built with flexbox and grid
+Tech Used: HTML, CSS (Flexbox, Grid), JavaScript (basic DOM events)`,
+    thumbnail: "assets/portfolio/thumbnails/omnifood.jpg",
+    image: "assets/portfolio/omnifood.jpg",
+    ViewLive: "http://vrajeshz.github.io/Bankist-Web/",
+    technologyTag: "HTML, CSS, JavaScript",
+    category: "websites",
   },
 ];
 
